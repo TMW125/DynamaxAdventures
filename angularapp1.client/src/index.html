@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Pokemon Dynamax Adventure Helper</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+  <div class="grid-container-A">
+    <button class="typeButton" title="Fire" id="fireButton" style="background: #E62829;" onclick="userAction('fire')">
+      <span class="img"><img src="https://archives.bulbagarden.net/media/upload/thumb/5/5e/Fire_icon.png/20px-Fire_icon.png" /></span>
+      <span class="text">Fire</span>
+    </button>
+    <button class="typeButton" title="Water" id="waterButton" style="background: #2980EF;" onclick="userAction('water')">
+      <span class="img"><img src="https://archives.bulbagarden.net/media/upload/thumb/7/7f/Water_icon.png/20px-Water_icon.png" /></span>
+      <span class="text">Water</span>
+    </button>
+    <button class="typeButton" title="Grass" id="grassButton" style="background: #3FA129; " onclick="userAction('grass')">
+      <span class="img"><img src="https://archives.bulbagarden.net/media/upload/thumb/c/cb/Grass_icon.png/20px-Grass_icon.png" /></span>
+      <span class="text">Grass</span>
+    </button>
+    <button class="typeButton" title="Electric" id="electricButton" style="background: #FAC000; " onclick="userAction('electric')">
+      <span class="img"><img src="https://archives.bulbagarden.net/media/upload/thumb/a/af/Electric_icon.png/20px-Electric_icon.png" /></span>
+      <span class="text">Electric</span>
+    </button>
+    <button class="typeButton" title="Psychic" id="psychicButton" style="background: #EF4179; " onclick="userAction('psychic')">
+      <span class="img"><img src="" /></span>
+      <span class="text">Psychic</span>
+    </button>
+    <button class="typeButton" title="Ice" id="iceButton" style="background: #3DCEF3; " onclick="userAction('ice')">
+      <span class="img"><img src="" /></span>
+      <span class="text">Ice</span>
+    </button>
+    <button class="typeButton" title="Dragon" id="dragonButton" style="background: #5060E1; " onclick="userAction('dragon')">
+      <span class="img"><img src="" /></span>
+      <span class="text">Dragon</span>
+    </button>
+    <button class="typeButton" title="Dark" id="darkButton" style="background: #624D4E; " onclick="userAction('dark')">
+      <span class="img"><img src="" /></span>
+      <span class="text">Dark</span>
+    </button>
+    <button class="typeButton" title="Fairy" id="fairyButton" style="background: #EF70EF; " onclick="userAction('fairy')">
+      <span class="img"><img src="" /></span>
+      <span class="text">Fairy</span>
+    </button>
+  </div>
+  <div class="grid-container-B">
+    <button class="typeButton" title="Fighting" id="fightingButton" style="background: #FF8000; " onclick="userAction('fighting')">
+      <span class="img"><img src="https://archives.bulbagarden.net/media/upload/thumb/7/7d/Fighting_icon.png/20px-Fighting_icon.png" /></span>
+      <span class="text">Fighting</span>
+    </button>
+    <button class="typeButton" title="Flying" id="flyingButton" style="background: #81B9EF; " onclick="userAction('flying')">
+      <span class="img"><img src="" /></span>
+      <span class="text">Flying</span>
+    </button>
+    <button class="typeButton" title="Poison" id="poisonButton" style="background: #9141CB; " onclick="userAction('poison')">
+      <span class="img"><img src="" /></span>
+      <span class="text">Poison</span>
+    </button>
+    <button class="typeButton" title="Ground" id="groundButton" style="background: #915121; " onclick="userAction('ground')">
+      <span class="img"><img src="" /></span>
+      <span class="text">Ground</span>
+    </button>
+    <button class="typeButton" title="Rock" id="rockButton" style="background: #AFA981; " onclick="userAction('rock')">
+      <span class="img"><img src="" /></span>
+      <span class="text">Rock</span>
+    </button>
+    <button class="typeButton" title="Bug" id="bugButton" style="background: #91A119; " onclick="userAction('bug')">
+      <span class="img"><img src="" /></span>
+      <span class="text">Bug</span>
+    </button>
+    <button class="typeButton" title="Ghost" id="ghostButton" style="background: #704170; " onclick="userAction('ghost')">
+      <span class="img"><img src="" /></span>
+      <span class="text">Ghost</span>
+    </button>
+    <button class="typeButton" title="Steel" id="steelButton" style="background: #60A1B8; " onclick="userAction('steel')">
+      <span class="img"><img src="" /></span>
+      <span class="text">Steel</span>
+    </button>
+  </div>
+  <div id="response-container"></div>
+  <script>
+    const userAction = async (type) => {
+      const response = await fetch('https://localhost:7033/DynamaxAdventures?type=' + type);
+      const myJson = await response.json();
+      generateTable(myJson);
+    }
+    function generateTable(data) {
+      if (!Array.isArray(data)) {
+        data = [data]; // If it's a single object, wrap it in an array
+      }
+
+      const tableContainer = document.getElementById('response-container');
+      tableContainer.innerHTML = ''; // Clear previous table
+
+      const table = document.createElement('table');
+      const thead = document.createElement('thead');
+      const tbody = document.createElement('tbody');
+
+      // 🔹 Define custom column names
+      const headerMapping = {
+        "pName": "Pokemon",
+        "versionEx": "Version Exclusive",
+        "primaryType": "Primary Type",
+        "secondaryType": "Secondary Type"
+      };
+
+      // 🔹 Get JSON keys and replace with custom headers
+      const headers = Object.keys(data[0]);
+      const headerRow = document.createElement('tr');
+
+      headers.forEach(key => {
+        const th = document.createElement('th');
+        th.textContent = headerMapping[key] || key; // Use custom name or fallback to JSON key
+        headerRow.appendChild(th);
+      });
+
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+
+      // Create table rows dynamically
+      data.forEach(item => {
+        const row = document.createElement('tr');
+        headers.forEach(header => {
+          const td = document.createElement('td');
+          td.textContent = item[header] || ""; // If null, leave it blank
+          row.appendChild(td);
+        });
+        tbody.appendChild(row);
+      });
+
+      table.appendChild(tbody);
+      tableContainer.appendChild(table);
+    }
+  </script>
+
+</body>
+</html>
